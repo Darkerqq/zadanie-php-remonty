@@ -37,6 +37,8 @@
             <?php
             // <!-- tutaj skrypt 1 -->
             $conn = new mysqli("127.0.0.1", "root", "", "remonty");
+            $number = $_POST['pracownicy'];
+            
             if (!empty($_POST['pracownicy'])) {
                 echo $_POST['pracownicy'];
             }
