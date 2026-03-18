@@ -36,14 +36,18 @@
             </form>
             <?php
             // <!-- tutaj skrypt 1 -->
-            $conn = new mysqli("127.0.0.1", "root", "", "remonty");
+            $conn = new mysqli("127.0.0.1", "myroot", "1234", "remonty");
             $number = $_POST['pracownicy'];
             
-            if (!empty($_POST['pracownicy'])) {
-                echo $_POST['pracownicy'];
+            if (!empty($number)) {
+
+                $query = "SELECT nazwa_firmy, liczba_pracownikow FROM wykonawcy WHERE liczba_pracownikow >= $number";
+                $result = $conn->query($query);
+
+                while ($row = $result->fetch_assoc()) {
+                    echo "<p>" . $row['nazwa_firmy'] . ", " . $row['liczba_pracownikow'] . " pracowników</p>";
+                }
             }
-           
-            // $query = $conn-> query("SELECT nazwa_firmy, liczba_pracownikow FROM wykonawcy WHERE liczba_pracownikow > 40;")
             ?>
             
 
@@ -63,9 +67,10 @@
                     }
                     ?>            
                 </select><br>
-                <input type="radio" id="malowanie" name="wykonianie" checked>
+                <input type="radio" id="malowanie" name="wykonianie" value="malowanie" checked>
                 <label for="malowanie">Malowanie</label><br>
-                <input type="radio" id="gipsowanie"  name="wykonianie">
+                
+                <input type="radio" id="gipsowanie"  name="wykonianie" value="gipsowanie">
                 <label for="gipsowanie">Gipsowanie</label><br>
 
                 <input type="submit" value="Szukaj klientów">
@@ -74,17 +79,19 @@
             <ul>
                 <!-- tutaj będzie skrypt 3 -->
                 <?php
-                if (isset($_POST['miasto']) && isset($_POST['wykonianie'])) {
-                    $wybrane_miasto = $conn->real_escape_string($_POST['miasto']);
-                    $wybrany_rodzaj = $conn->real_escape_string($_POST['wykonianie']);
-                    $zapytanie_sql = "SELECT imie, cena FROM klienci JOIN zlecenia ON klienci.id_klienta = zlecenia.id_zlecenia WHERE miasto = '$wybrane_miasto' AND rodzaj = '$wybrany_rodzaj'";
-                    $wynik_zapytania = $conn->query($zapytanie_sql);
-                    while ($wiersz_danych = $wynik_zapytania->fetch_assoc()) {
-                        $imie_klienta = htmlspecialchars($wiersz_danych['imie']);
-                        $cena_uslugi = htmlspecialchars($wiersz_danych['cena']);
-                        echo '<li>' . $imie_klienta . ' - ' . $cena_uslugi . '</li>';
+                    if (isset($_POST['miasto']) && isset($_POST['wykonianie'])) {
+
+                        $miasto = $_POST['miasto'];
+                        $rodzaj = $_POST['wykonianie'];
+
+                        $zapytanie = "SELECT imie, cena FROM klienci JOIN zlecenia ON klienci.id_klienta = zlecenia.id_zlecenia WHERE miasto = '$miasto' AND rodzaj = '$rodzaj'";
+
+                        $wynik = $conn->query($zapytanie);
+
+                        while ($wiersz = $wynik->fetch_assoc()) {
+                            echo "<li>" . $wiersz['imie'] . " - " . $wiersz['cena'] . "</li>";
+                        }
                     }
-                }
                 ?>
             </ul>
         </section>
